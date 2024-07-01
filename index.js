@@ -29,7 +29,21 @@ app.get('/api/v1/data', async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
-
+  app.get('/api/v1/data/:categoryName', async (req, res) => {
+    try {
+      const { categoryName } = req.params;
+      // console.log(categoryName);
+      const items = await mongoose.connection.db.collection('Ecommerce-products').find({ category: categoryName }).toArray();
+      if (!items) {
+        return res.status(404).json({ message: 'Category not found' });
+      }
+      res.json(items);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Error retrieving items', error });
+    }
+  });
+  
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
